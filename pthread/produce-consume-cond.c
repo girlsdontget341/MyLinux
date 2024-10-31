@@ -64,7 +64,7 @@ int main(){
         pthread_detach(producer[i]);
         pthread_detach(consumer[i]);
     }
-    while (1) {
+    while (1) {//必须加 防止在线程结束之前锁被释放
         sleep(10);
     }
     pthread_cond_destroy(&cond);
