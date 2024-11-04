@@ -42,7 +42,7 @@ int main(){
         {
             printf("server closed..\n");
         }
-        
+        sleep(1);
     }
     close(fd);
 }
