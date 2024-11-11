@@ -1,3 +1,4 @@
+//使用poll方法实现服务器，客户端同select_client.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
