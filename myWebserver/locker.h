@@ -47,12 +47,16 @@ public:
         pthread_cond_destroy(&m_cond);
     }
 
-    bool wait(pthread_mutex_t m_mutex){//使当前线程等待条件变量 m_cond
-        return pthread_cond_wait(&m_cond, &m_mutex) == 0;
+    bool wait(pthread_mutex_t *m_mutex){//使当前线程等待条件变量 m_cond
+        int ret = 0;
+        ret = pthread_cond_wait(&m_cond, m_mutex);
+        return ret == 0;
     }
 
-    bool timewait(pthread_mutex_t m_mutex, struct timespec t){//使当前线程限时等待条件变量 m_cond，超时返回
-        return pthread_cond_timedwait(&m_cond, &m_mutex, &t) == 0;
+    bool timewait(pthread_mutex_t *m_mutex, struct timespec t){//使当前线程限时等待条件变量 m_cond，超时返回
+        int ret = 0;
+        ret = pthread_cond_timedwait(&m_cond, m_mutex, &t);
+        return ret == 0;
     }
 
     bool signal(){//唤醒一个等待该条件变量的线程

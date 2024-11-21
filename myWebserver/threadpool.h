@@ -37,7 +37,7 @@ threadpool<T>::threadpool(int thread_number, int max_requests)://构造函数中
         throw std::exception();
     }
 
-    m_threads = new pthreads_t[m_thread_number];
+    m_threads = new pthread_t[m_thread_number];
     //m_threads = new pthread_t[thread_number];  // 错误：使用局部参数
     //这将导致问题，因为 thread_number 仅在构造函数内部有效，一旦构造函数结束，thread_number 的值就会消失。
     //m_threads 数组的大小需要基于类的成员变量 m_thread_number，以便确保它在整个对象生命周期内有效。
@@ -99,7 +99,7 @@ void threadpool<T>::run(){
             m_queuelocker.unlock();
             continue;
         }
-        T * request = m_work_queue.front();
+        T* request = m_work_queue.front();
         m_work_queue.pop_front();
         m_queuelocker.unlock();
         if(!request){

@@ -47,10 +47,10 @@ int main(int argc, char* argv[]){//前面表示命令行参数个数 后面是�
         printf("usage: %s port_number\n", basename(argv[0]));
         return 1;
     }
-    if(!isValidPort(argv[1])){//检验端口号是否合法
-        printf("Error: Invalid port number '%s'. Please provide a number between 1 and 65535.\n", argv[1]);
-        return 1;
-    }
+    // if(!isValidPort(argv[1])){//检验端口号是否合法
+    //     printf("Error: Invalid port number '%s'. Please provide a number between 1 and 65535.\n", argv[1]);
+    //     return 1;
+    // }
 
     int port = atoi(argv[1]);
     addsig(SIGPIPE, SIG_IGN);//忽略SIGPIPE信号
@@ -103,11 +103,11 @@ int main(int argc, char* argv[]){//前面表示命令行参数个数 后面是�
                     printf( "errno is: %d\n", errno );
                     continue;
                 }
-                if(http_conn::m_user_count > MAX_FD){//连接数超过限制
+                if(http_conn::m_user_count >= MAX_FD){//连接数超过限制
                     close(connfd);
                     continue;
                 }
-                users[connfd].init(sockfd, client_address);
+                users[connfd].init(connfd, client_address);
             }else if(events[i].events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)){
                 /*EPOLLRDHUP：这个事件表示远程端已经关闭连接（如，TCP连接的对端发送了 FIN）。它通常意味着客户端关闭了连接。
                 EPOLLHUP：该事件表示连接被挂起，通常意味着远端连接被断开或连接出现了问题。
@@ -116,13 +116,13 @@ int main(int argc, char* argv[]){//前面表示命令行参数个数 后面是�
                 如果发生了上述事件之一，表示客户端的连接已经出错或关闭。
                 在这种情况下，我们需要关闭连接。*/
                 users[sockfd].close_conn();
-            }else if(events[i].events & (EPOLLIN)){
+            }else if(events[i].events & EPOLLIN){
                 if(users[sockfd].read()){
                     pool->append(users + sockfd);
                 }else{
                     users[sockfd].close_conn();
                 }
-            }else if(events[i].events & (EPOLLOUT)){
+            }else if(events[i].events & EPOLLOUT){
                 if(!users[sockfd].write()){
                     users[sockfd].close_conn();
                 }
@@ -133,6 +133,5 @@ int main(int argc, char* argv[]){//前面表示命令行参数个数 后面是�
     close(listenfd);
     delete [] users;
     delete pool;
-
     return 0;
 }

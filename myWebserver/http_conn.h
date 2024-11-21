@@ -78,7 +78,7 @@ private:
     char* get_line() { return m_read_buf + m_start_line; }
     LINE_STATUS parse_line();
 
-    bool process_write(int ret);
+    bool process_write(HTTP_CODE ret);
     // 这一组函数被process_write调用以填充HTTP应答。
     void unmap();
     bool add_response( const char* format, ... );
